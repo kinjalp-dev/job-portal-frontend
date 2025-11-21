@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Job Portal</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>Job Portal</h2>
+    <a href="#" class="nav-link">Dashboard</a>
+    <a href="#" class="nav-link active">Jobs</a>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h3>Job Listings</h3>
+      <div class="top-actions">
+        <button id="openAddBtn">+ Add Job</button>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <input id="searchBox" type="text" placeholder="Search by title..." />
+      <select id="filterType">
+        <option value="">All Types</option>
+        <option>Full-Time</option>
+        <option>Part-Time</option>
+        <option>Remote</option>
+        <option>Internship</option>
+      </select>
+
+      <select id="filterStatus">
+        <option value="">All Status</option>
+        <option>Active</option>
+        <option>Pending</option>
+        <option>Closed</option>
+      </select>
+
+      <button id="clearFilters">Clear</button>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards">
+      <div class="card">
+        <h2 id="totalJobs">0</h2>
+        <p>Total Jobs</p>
+      </div>
+      <div class="card">
+        <h2 id="activeJobs">0</h2>
+        <p>Active Jobs</p>
+      </div>
+      <div class="card">
+        <h2 id="pendingJobs">0</h2>
+        <p>Pending Jobs</p>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table id="jobTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Applications</th>
+            <th>Duration</th>
+            <th>Description</th>
+            <th style="width:140px">Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-bg" id="editModalBg" aria-hidden="true">
+    <div class="modal">
+      <h3 id="modalTitle">Add Job</h3>
+
+      <input type="hidden" id="editId">
+
+      <label>Job Title</label>
+      <input id="jobTitle" type="text" placeholder="Job Title" />
+
+      <label>Type</label>
+      <select id="jobType">
+        <option value="">Select Job Type</option>
+        <option>Full-Time</option>
+        <option>Part-Time</option>
+        <option>Remote</option>
+        <option>Internship</option>
+      </select>
+
+      <label>Status</label>
+      <select id="status">
+        <option value="">Select Status</option>
+        <option>Active</option>
+        <option>Pending</option>
+        <option>Closed</option>
+      </select>
+
+      <label>Applications</label>
+      <input id="applications" type="number" min="0" placeholder="0" />
+
+      <label>Duration</label>
+      <input id="duration" type="text" placeholder="e.g. 6 Months" />
+
+      <label>Description</label>
+      <textarea id="description" rows="4" placeholder="Short description"></textarea>
+
+      <div class="modal-actions">
+        <button id="saveBtn">Save</button>
+        <button id="cancelBtn" class="danger">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
