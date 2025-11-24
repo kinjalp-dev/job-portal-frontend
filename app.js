@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateStats(list) {
     totalJobsEl.innerText = list.length;
     activeJobsEl.innerText = list.filter(j => (j.status || "").toLowerCase() === "active").length;
-    pendingJobsEl.innerText = list.filter(j => (j.status || "").toLowerCase() === "pending").length;
+    pendingJobsEl.innerText = list.filter(j => (j.status || "").toLowerCase() === "draft").length;
   }
 
   // --- Render table rows ---
@@ -281,3 +281,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
