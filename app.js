@@ -1,4 +1,7 @@
+// ✅ 1) API base should match your Laravel server
+// If you're running: php artisan serve --> usually http://127.0.0.1:8000
 const API_BASE = "http://127.0.0.1:8000/api";
+// NOTE: when you deploy backend, change this to your real API URL
 
 document.addEventListener("DOMContentLoaded", () => {
   // Elements
@@ -52,9 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadJobs() {
     tbody.innerHTML = `<tr><td colspan="8">Loading...</td></tr>`;
     try {
-      const res = await fetch(`${API_BASE}/jobs`);
+      const res = await fetch(`${API_BASE}/jobs`, {
+        headers: {
+          "Accept": "application/json",      // ⬅ extra safe for Laravel API
+        },
+      });
       if (!res.ok) throw new Error(`API error ${res.status}`);
       const data = await res.json();
+
+      // Laravel index() -> returns collection -> pure array
       allJobs = Array.isArray(data) ? data : (data.data || []);
       applyFilters();
     } catch (err) {
@@ -116,7 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
         </td>
       `;
 
-      // event delegation for row-level click to open edit too
       tbody.appendChild(tr);
     });
 
@@ -171,8 +179,14 @@ document.addEventListener("DOMContentLoaded", () => {
     showModal();
   }
 
-  function showModal() { editModalBg.style.display = "flex"; editModalBg.setAttribute("aria-hidden","false"); }
-  function closeModal() { editModalBg.style.display = "none"; editModalBg.setAttribute("aria-hidden","true"); }
+  function showModal() {
+    editModalBg.style.display = "flex";
+    editModalBg.setAttribute("aria-hidden","false");
+  }
+  function closeModal() {
+    editModalBg.style.display = "none";
+    editModalBg.setAttribute("aria-hidden","true");
+  }
 
   // --- Save button (create or update) ---
   async function onSaveClicked() {
@@ -193,30 +207,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       if (id) {
-        // update
+        // 🔁 UPDATE (matches JobController@update JSON format)
         const res = await fetch(`${API_BASE}/jobs/${id}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
           body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error(`Update failed ${res.status}`);
-        const updated = await res.json();
-        // update local copy
-        allJobs = allJobs.map(j => (String(j.id) === String(updated.id) ? updated : j));
+        const json = await res.json();
+        const updated = json.data;           // ⬅ Laravel returns { message, data: job }
+
+        allJobs = allJobs.map(j =>
+          String(j.id) === String(updated.id) ? updated : j
+        );
         applyFilters();
         closeModal();
       } else {
-        // create
+        // 🆕 CREATE (matches JobController@store JSON format)
         const res = await fetch(`${API_BASE}/jobs`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
           body: JSON.stringify(payload)
         });
         if (!res.ok) {
           const txt = await res.text();
           throw new Error(`Create failed ${res.status}: ${txt}`);
         }
-        const created = await res.json();
+        const json = await res.json();
+        const created = json.data;          // ⬅ Laravel returns { message, data: job }
+
         allJobs.unshift(created);
         applyFilters();
         closeModal();
@@ -231,7 +256,12 @@ document.addEventListener("DOMContentLoaded", () => {
   async function deleteJob(id) {
     if (!confirm("Delete this job?")) return;
     try {
-      const res = await fetch(`${API_BASE}/jobs/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE}/jobs/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Accept": "application/json",
+        }
+      });
       if (!res.ok) {
         const txt = await res.text();
         throw new Error(`Delete failed ${res.status}: ${txt}`);
@@ -251,5 +281,3 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-
-
